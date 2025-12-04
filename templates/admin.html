@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - AI Interview Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            color: #e2e8f0;
+            margin: 0;
+        }
+        .container { 
+            max-width: 1400px; 
+            margin: 0 auto; 
+            background: transparent;
+            overflow: visible;
+            padding: 2rem;
+        }
+        .header { 
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            color: #fff; 
+            padding: 1.5rem 2rem; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        .header h1 { margin: 0; font-weight: 700; font-size: 1.8rem; letter-spacing: -0.5px; }
+        .nav a { 
+            color: #e2e8f0; 
+            text-decoration: none; 
+            margin-left: 12px; 
+            background: rgba(59, 130, 246, 0.2);
+            padding: 10px 16px; 
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            letter-spacing: 0.3px;
+        }
+        .nav a:hover {
+            background: rgba(59, 130, 246, 0.4);
+            transform: translateY(-2px);
+        }
+        .content { padding: 0; }
+        .grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
+        .card { 
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 16px; 
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        .card h2 { 
+            margin: 0; 
+            padding: 1.2rem 1.5rem; 
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #f1f5f9;
+            letter-spacing: -0.3px;
+        }
+        .card .body { padding: 1.5rem; }
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { 
+            display: block; 
+            font-weight: 600; 
+            margin-bottom: 8px;
+            color: #cbd5e1;
+            font-size: 0.95rem;
+            letter-spacing: 0.3px;
+        }
+        .form-group input, .form-group textarea, .form-group select { 
+            width: 100%; 
+            padding: 12px 14px; 
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            border-radius: 10px;
+            background: rgba(15, 23, 42, 0.6);
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        .form-group input::placeholder, .form-group textarea::placeholder {
+            color: #64748b;
+        }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+            background: rgba(15, 23, 42, 0.9);
+        }
+        .btn { 
+            display: inline-block; 
+            padding: 12px 20px; 
+            border-radius: 10px; 
+            text-decoration: none; 
+            font-weight: 600; 
+            cursor: pointer; 
+            border: none;
+            transition: all 0.3s ease;
+            letter-spacing: 0.3px;
+        }
+        .btn.primary { 
+            background: linear-gradient(135deg, #3b82f6, #1e40af);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+        .btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+        }
+        .btn.secondary { 
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        .btn.secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+        }
+        .btn.danger { 
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+        .btn.danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+        }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { text-align: left; padding: 14px; border-bottom: 1px solid rgba(148, 163, 184, 0.2); }
+        th { 
+            background: rgba(15, 23, 42, 0.6);
+            font-weight: 700;
+            color: #f1f5f9;
+            letter-spacing: 0.3px;
+        }
+        td { color: #cbd5e1; }
+        td strong { color: #f1f5f9; }
+        .muted { color: #94a3b8; font-size: 0.85rem; }
+        .badge { 
+            padding: 6px 12px; 
+            border-radius: 12px; 
+            font-size: 0.8rem; 
+            font-weight: 700; 
+            display: inline-block;
+            letter-spacing: 0.5px;
+        }
+        .badge.open { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge.closed { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .badge.draft { background: rgba(59, 130, 246, 0.2); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .badge.in_progress { background: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .table-actions { white-space: nowrap; }
+        @media (max-width: 900px) { .row { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Admin Dashboard</h1>
+            <div class="nav">
+                <a href="/">Interview</a>
+                <a href="/candidates">Candidates</a>
+            </div>
+        </div>
+        <div class="content">
+            <div class="grid">
+                <div class="card">
+                    <h2>Create Job Opening</h2>
+                    <div class="body">
+                        <form id="job-form">
+                            <div class="row">
+                                <div>
+                                    <div class="form-group">
+                                        <label>Title</label>
+                                        <input type="text" id="job-title" placeholder="e.g., Frontend Engineer" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Location</label>
+                                        <input type="text" id="job-location" placeholder="e.g., Remote / Bengaluru">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Experience</label>
+                                        <input type="text" id="job-experience" placeholder="e.g., 3-5 years">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Status</label>
+                                        <select id="job-status">
+                                            <option value="open">Open</option>
+                                            <option value="closed">Closed</option>
+                                            <option value="draft">Draft</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="form-group">
+                                        <label>Description</label>
+                                        <textarea id="job-description" rows="6" placeholder="Short role description..."></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Interview Questions (one per line)</label>
+                                        <textarea id="job-questions" rows="8" placeholder="Tell me about yourself.&#10;Explain closures in JavaScript.&#10;What is a REST API?" oninput="updateQuestionList()"></textarea>
+                                    </div>
+                                    <div class="form-group" id="question-types-container" style="display: none;">
+                                        <label>Mark Coding Questions</label>
+                                        <div id="question-types-list" style="max-height: 200px; overflow-y: auto; padding: 10px; background: rgba(15, 23, 42, 0.6); border-radius: 10px; border: 1px solid rgba(148, 163, 184, 0.3);">
+                                            <!-- Question checkboxes will be dynamically added here -->
+                                        </div>
+                                        <div class="muted" style="margin-top: 8px;">Check the boxes for questions that require code input</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Question Timer Settings</label>
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                            <div>
+                                                <label style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 5px; display: block;">Text Question Timer (seconds)</label>
+                                                <input type="number" id="text-question-timer" value="120" min="30" max="600" style="width: 100%; padding: 10px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 8px; color: #e2e8f0;">
+                                                <div class="muted" style="margin-top: 5px; font-size: 0.85rem;">Default: 120s (2 minutes)</div>
+                                            </div>
+                                            <div>
+                                                <label style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 5px; display: block;">Coding Question Timer (seconds)</label>
+                                                <input type="number" id="coding-question-timer" value="300" min="60" max="1800" style="width: 100%; padding: 10px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 8px; color: #e2e8f0;">
+                                                <div class="muted" style="margin-top: 5px; font-size: 0.85rem;">Default: 300s (5 minutes)</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn primary" onclick="createJob()">Create Job</button>
+                            <span id="create-status" class="muted"></span>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Job Openings</h2>
+                    <div class="body">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Info</th>
+                                    <th>Status</th>
+                                    <th>Share Link</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for job in jobs %}
+                                <tr>
+                                    <td>
+                                        <div><strong>{{ job.title }}</strong></div>
+                                        <div class="muted">{{ job.id }}</div>
+                                    </td>
+                                    <td>
+                                        <div class="muted">{{ job.location }}{% if job.experience %} · {{ job.experience }}{% endif %}</div>
+                                        <div class="muted">Questions: {{ job.questions|length }}</div>
+                                    </td>
+                                    <td>
+                                        <span class="badge {{ job.status }}">{{ job.status|title }}</span>
+                                    </td>
+                                    <td>
+                                        <div style="display:flex; gap:8px; align-items:center;">
+                                            <input type="text" readonly value="{{ request.url.scheme }}://{{ request.url.hostname }}{% if request.url.port %}:{{ request.url.port }}{% endif %}/?job_id={{ job.id }}" style="flex:1; padding:8px; border:1px solid #e5e7eb; border-radius:6px;" onclick="this.select();document.execCommand('copy');">
+                                            <a class="btn secondary" href="{{ request.url.scheme }}://{{ request.url.hostname }}{% if request.url.port %}:{{ request.url.port }}{% endif %}/?job_id={{ job.id }}&fullscreen=1" target="_blank" rel="noopener">Open Interview</a>
+                                        </div>
+                                        <div class="muted">Send this URL to candidates</div>
+                                    </td>
+                                    <td class="table-actions">
+                                        <button class="btn danger" onclick="deleteJob('{{ job.id }}')">Delete</button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Interviews</h2>
+                    <div class="body">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Candidate</th>
+                                    <th>Job</th>
+                                    <th>Session</th>
+                                    <th>Status</th>
+                                    <th>Score</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for x in interviews %}
+                                <tr>
+                                    <td>
+                                        <div><strong>{{ x.name }}</strong></div>
+                                        <div class="muted">{{ x.email }}{% if x.phone %} · {{ x.phone }}{% endif %}</div>
+                                    </td>
+                                    <td>
+                                        <div>{{ x.job_title or x.job_id or '—' }}</div>
+                                    </td>
+                                    <td>
+                                        <div class="muted">{{ x.session_id }}</div>
+                                        <div class="muted">{{ x.created_at }}</div>
+                                    </td>
+                                    <td>
+                                        <span class="badge {{ x.status }}">{{ x.status.replace('_',' ')|title }}</span>
+                                    </td>
+                                    <td>
+                                        {% if x.overall_score is not none %}
+                                            {{ '%.1f'|format(x.overall_score) }}/100
+                                        {% else %}
+                                            —
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if x.has_report %}
+                                            <a class="btn secondary" href="/candidates/{{ x.session_id }}">View Report</a>
+                                        {% else %}
+                                            <span class="muted">Pending</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateQuestionList() {
+            const questionsText = document.getElementById('job-questions').value;
+            const questions = questionsText.split('\n').filter(q => q.trim());
+            const container = document.getElementById('question-types-container');
+            const list = document.getElementById('question-types-list');
+            
+            if (questions.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+            
+            container.style.display = 'block';
+            list.innerHTML = '';
+            
+            questions.forEach((question, idx) => {
+                const div = document.createElement('div');
+                div.style.cssText = 'margin-bottom: 8px; padding: 8px; background: rgba(30, 41, 59, 0.5); border-radius: 6px;';
+                
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.id = `q-type-${idx}`;
+                checkbox.style.cssText = 'margin-right: 10px; cursor: pointer;';
+                
+                const label = document.createElement('label');
+                label.htmlFor = `q-type-${idx}`;
+                label.style.cssText = 'cursor: pointer; color: #cbd5e1;';
+                label.textContent = question.substring(0, 80) + (question.length > 80 ? '...' : '');
+                
+                div.appendChild(checkbox);
+                div.appendChild(label);
+                list.appendChild(div);
+            });
+        }
+        
+        async function createJob() {
+            const status = document.getElementById('create-status');
+            status.textContent = 'Saving...';
+            try {
+                const questionsText = document.getElementById('job-questions').value;
+                const questions = questionsText.split('\n').filter(q => q.trim());
+                
+                // Build question types object
+                const questionTypes = {};
+                questions.forEach((_, idx) => {
+                    const checkbox = document.getElementById(`q-type-${idx}`);
+                    questionTypes[idx] = checkbox && checkbox.checked ? 'coding' : 'text';
+                });
+                
+                const res = await fetch('/admin/jobs/create', {
+                    method: 'POST',
+                    body: new URLSearchParams({
+                        title: document.getElementById('job-title').value.trim(),
+                        description: document.getElementById('job-description').value.trim(),
+                        location: document.getElementById('job-location').value.trim(),
+                        experience: document.getElementById('job-experience').value.trim(),
+                        status: document.getElementById('job-status').value,
+                        questions: questionsText,
+                        question_types: JSON.stringify(questionTypes),
+                        text_question_timer: document.getElementById('text-question-timer').value,
+                        coding_question_timer: document.getElementById('coding-question-timer').value
+                    })
+                });
+                if (!res.ok) throw new Error('Failed to create job');
+                status.textContent = 'Created';
+                setTimeout(() => window.location.reload(), 500);
+            } catch (e) {
+                status.textContent = 'Error creating job';
+            }
+        }
+        async function deleteJob(id) {
+            if (!confirm('Delete this job?')) return;
+            try {
+                const res = await fetch(`/admin/jobs/${id}/delete`, { method: 'POST' });
+                if (!res.ok) throw new Error('Failed');
+                window.location.reload();
+            } catch (e) {
+                alert('Failed to delete job');
+            }
+        }
+    </script>
+</body>
+</html>
+
+

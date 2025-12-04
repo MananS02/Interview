@@ -1,0 +1,45 @@
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Python cache & compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Packaging / build artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Editor settings
+.vscode/
+.idea/
+
+# Environment & secrets
+.env
+.env.*
+*.env
+
+# Logs
+*.log
+logs/
+
+# Databases (legacy SQLite - now using MongoDB)
+*.db
+*.db-journal
+data/jobs.json
+
+# Generated media
+audio_files/
+
+# Miscellaneous
+*.sqlite3
+.cache/

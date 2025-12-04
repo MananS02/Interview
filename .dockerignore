@@ -1,0 +1,31 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+
+# Git metadata
+.git/
+.gitignore
+
+# Environment and secrets
+.env
+*.env
+
+# OS / editor junk
+*.swp
+*.swo
+.DS_Store
+
+# Build outputs
+/dist
+/build
+*.egg-info/
+
+# Local data and caches
+/audio_files/
+/tmp/

@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parallel Interview API Tester</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card h3 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            opacity: 0.9;
+            font-size: 0.9em;
+        }
+
+        .endpoint-section {
+            margin-bottom: 30px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .endpoint-header {
+            background: #f5f5f5;
+            padding: 15px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s;
+        }
+
+        .endpoint-header:hover {
+            background: #e8e8e8;
+        }
+
+        .endpoint-header h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .method-badge {
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .method-get {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .method-post {
+            background: #2196F3;
+            color: white;
+        }
+
+        .method-delete {
+            background: #f44336;
+            color: white;
+        }
+
+        .endpoint-body {
+            padding: 20px;
+            display: none;
+        }
+
+        .endpoint-body.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 1em;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .response-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+        }
+
+        .response-box pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .url-display {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            word-break: break-all;
+        }
+
+        .success {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .error {
+            color: #f44336;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Parallel Interview API Tester</h1>
+            <p>Test and monitor your interview API endpoints</p>
+            <p style="font-size: 0.9em; margin-top: 10px;">Base URL: <strong>http://localhost:8005</strong></p>
+        </div>
+
+        <div class="content">
+            <!-- Statistics Section -->
+            <div id="stats-section">
+                <h2 style="margin-bottom: 20px;">📊 System Statistics</h2>
+                <div class="stats-grid" id="stats-grid">
+                    <div class="stat-card">
+                        <h3 id="stat-total">-</h3>
+                        <p>Total Sessions</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="stat-active">-</h3>
+                        <p>Active Sessions</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="stat-completed">-</h3>
+                        <p>Completed</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="stat-rooms">-</h3>
+                        <p>LiveKit Rooms</p>
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="loadStats()">🔄 Refresh Statistics</button>
+            </div>
+
+            <hr style="margin: 40px 0; border: none; border-top: 2px solid #e0e0e0;">
+
+            <!-- API Endpoints -->
+            <h2 style="margin-bottom: 20px;">🔗 API Endpoints</h2>
+
+            <!-- Create Session -->
+            <div class="endpoint-section">
+                <div class="endpoint-header" onclick="toggleEndpoint('create')">
+                    <h3>
+                        <span class="method-badge method-post">POST</span>
+                        Create Interview Session
+                    </h3>
+                    <span>▼</span>
+                </div>
+                <div class="endpoint-body" id="endpoint-create">
+                    <div class="url-display">POST http://localhost:8005/api/parallel_interview/create</div>
+                    <form onsubmit="createSession(event)">
+                        <div class="form-group">
+                            <label>Candidate Name *</label>
+                            <input type="text" id="create-name" value="John Doe" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email *</label>
+                            <input type="email" id="create-email" value="john@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input type="text" id="create-phone" value="+1234567890">
+                        </div>
+                        <div class="form-group">
+                            <label>Questions (JSON array) *</label>
+                            <textarea
+                                id="create-questions">["What is your experience with Python?", "Explain REST APIs", "Write a function to reverse a string"]</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Question Types (JSON array)</label>
+                            <textarea id="create-types">["text", "text", "coding"]</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Create Session</button>
+                    </form>
+                    <div id="response-create" class="response-box" style="display:none;"></div>
+                </div>
+            </div>
+
+            <!-- Get Session Details -->
+            <div class="endpoint-section">
+                <div class="endpoint-header" onclick="toggleEndpoint('get-session')">
+                    <h3>
+                        <span class="method-badge method-get">GET</span>
+                        Get Session Details
+                    </h3>
+                    <span>▼</span>
+                </div>
+                <div class="endpoint-body" id="endpoint-get-session">
+                    <div class="url-display">GET http://localhost:8005/api/parallel_interview/session/{session_id}</div>
+                    <form onsubmit="getSession(event)">
+                        <div class="form-group">
+                            <label>Session ID *</label>
+                            <input type="text" id="get-session-id" placeholder="Enter session ID" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Get Details</button>
+                    </form>
+                    <div id="response-get-session" class="response-box" style="display:none;"></div>
+                </div>
+            </div>
+
+            <!-- List Sessions -->
+            <div class="endpoint-section">
+                <div class="endpoint-header" onclick="toggleEndpoint('list')">
+                    <h3>
+                        <span class="method-badge method-get">GET</span>
+                        List All Sessions
+                    </h3>
+                    <span>▼</span>
+                </div>
+                <div class="endpoint-body" id="endpoint-list">
+                    <div class="url-display">GET http://localhost:8005/api/parallel_interview/sessions</div>
+                    <form onsubmit="listSessions(event)">
+                        <div class="form-group">
+                            <label>Status Filter</label>
+                            <select id="list-status"
+                                style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 5px;">
+                                <option value="">All</option>
+                                <option value="initialized">Initialized</option>
+                                <option value="in_progress">In Progress</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Limit</label>
+                            <input type="number" id="list-limit" value="10" min="1" max="200">
+                        </div>
+                        <button type="submit" class="btn btn-primary">List Sessions</button>
+                    </form>
+                    <div id="response-list" class="response-box" style="display:none;"></div>
+                </div>
+            </div>
+
+            <!-- Start Session -->
+            <div class="endpoint-section">
+                <div class="endpoint-header" onclick="toggleEndpoint('start')">
+                    <h3>
+                        <span class="method-badge method-post">POST</span>
+                        Start Session
+                    </h3>
+                    <span>▼</span>
+                </div>
+                <div class="endpoint-body" id="endpoint-start">
+                    <div class="url-display">POST
+                        http://localhost:8005/api/parallel_interview/session/{session_id}/start</div>
+                    <form onsubmit="startSession(event)">
+                        <div class="form-group">
+                            <label>Session ID *</label>
+                            <input type="text" id="start-session-id" placeholder="Enter session ID" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Start Session</button>
+                    </form>
+                    <div id="response-start" class="response-box" style="display:none;"></div>
+                </div>
+            </div>
+
+            <!-- End Session -->
+            <div class="endpoint-section">
+                <div class="endpoint-header" onclick="toggleEndpoint('end')">
+                    <h3>
+                        <span class="method-badge method-post">POST</span>
+                        End Session
+                    </h3>
+                    <span>▼</span>
+                </div>
+                <div class="endpoint-body" id="endpoint-end">
+                    <div class="url-display">POST http://localhost:8005/api/parallel_interview/session/{session_id}/end
+                    </div>
+                    <form onsubmit="endSession(event)">
+                        <div class="form-group">
+                            <label>Session ID *</label>
+                            <input type="text" id="end-session-id" placeholder="Enter session ID" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">End Session</button>
+                    </form>
+                    <div id="response-end" class="response-box" style="display:none;"></div>
+                </div>
+            </div>
+
+            <!-- Delete Session -->
+            <div class="endpoint-section">
+                <div class="endpoint-header" onclick="toggleEndpoint('delete')">
+                    <h3>
+                        <span class="method-badge method-delete">DELETE</span>
+                        Delete Session
+                    </h3>
+                    <span>▼</span>
+                </div>
+                <div class="endpoint-body" id="endpoint-delete">
+                    <div class="url-display">DELETE http://localhost:8005/api/parallel_interview/session/{session_id}
+                    </div>
+                    <form onsubmit="deleteSession(event)">
+                        <div class="form-group">
+                            <label>Session ID *</label>
+                            <input type="text" id="delete-session-id" placeholder="Enter session ID" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="background: #f44336;">Delete
+                            Session</button>
+                    </form>
+                    <div id="response-delete" class="response-box" style="display:none;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const BASE_URL = 'http://localhost:8005';
+
+        function toggleEndpoint(id) {
+            const element = document.getElementById(`endpoint-${id}`);
+            element.classList.toggle('active');
+        }
+
+        function showResponse(elementId, data, isError = false) {
+            const element = document.getElementById(`response-${elementId}`);
+            element.style.display = 'block';
+            const statusClass = isError ? 'error' : 'success';
+            element.innerHTML = `<pre class="${statusClass}">${JSON.stringify(data, null, 2)}</pre>`;
+        }
+
+        async function loadStats() {
+            try {
+                const response = await fetch(`${BASE_URL}/api/parallel_interview/stats`);
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    document.getElementById('stat-total').textContent = data.stats.total_sessions;
+                    document.getElementById('stat-active').textContent = data.stats.active_sessions;
+                    document.getElementById('stat-completed').textContent = data.stats.completed_sessions;
+                    document.getElementById('stat-rooms').textContent = data.stats.active_livekit_rooms;
+                }
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        async function createSession(event) {
+            event.preventDefault();
+            try {
+                const questions = JSON.parse(document.getElementById('create-questions').value);
+                const types = JSON.parse(document.getElementById('create-types').value);
+
+                const response = await fetch(`${BASE_URL}/api/parallel_interview/create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: document.getElementById('create-name').value,
+                        email: document.getElementById('create-email').value,
+                        phone: document.getElementById('create-phone').value,
+                        questions: questions,
+                        question_types: types
+                    })
+                });
+
+                const data = await response.json();
+                showResponse('create', data, !response.ok);
+
+                if (data.session_id) {
+                    // Auto-fill session ID in other forms
+                    document.getElementById('get-session-id').value = data.session_id;
+                    document.getElementById('start-session-id').value = data.session_id;
+                }
+
+                loadStats();
+            } catch (error) {
+                showResponse('create', { error: error.message }, true);
+            }
+        }
+
+        async function getSession(event) {
+            event.preventDefault();
+            try {
+                const sessionId = document.getElementById('get-session-id').value;
+                const response = await fetch(`${BASE_URL}/api/parallel_interview/session/${sessionId}`);
+                const data = await response.json();
+                showResponse('get-session', data, !response.ok);
+            } catch (error) {
+                showResponse('get-session', { error: error.message }, true);
+            }
+        }
+
+        async function listSessions(event) {
+            event.preventDefault();
+            try {
+                const status = document.getElementById('list-status').value;
+                const limit = document.getElementById('list-limit').value;
+                let url = `${BASE_URL}/api/parallel_interview/sessions?limit=${limit}`;
+                if (status) url += `&status=${status}`;
+
+                const response = await fetch(url);
+                const data = await response.json();
+                showResponse('list', data, !response.ok);
+            } catch (error) {
+                showResponse('list', { error: error.message }, true);
+            }
+        }
+
+        async function startSession(event) {
+            event.preventDefault();
+            try {
+                const sessionId = document.getElementById('start-session-id').value;
+                const response = await fetch(`${BASE_URL}/api/parallel_interview/session/${sessionId}/start`, {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                showResponse('start', data, !response.ok);
+                loadStats();
+            } catch (error) {
+                showResponse('start', { error: error.message }, true);
+            }
+        }
+
+        async function endSession(event) {
+            event.preventDefault();
+            try {
+                const sessionId = document.getElementById('end-session-id').value;
+                const response = await fetch(`${BASE_URL}/api/parallel_interview/session/${sessionId}/end`, {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                showResponse('end', data, !response.ok);
+                loadStats();
+            } catch (error) {
+                showResponse('end', { error: error.message }, true);
+            }
+        }
+
+        async function deleteSession(event) {
+            event.preventDefault();
+            if (!confirm('Are you sure you want to delete this session?')) return;
+
+            try {
+                const sessionId = document.getElementById('delete-session-id').value;
+                const response = await fetch(`${BASE_URL}/api/parallel_interview/session/${sessionId}`, {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+                showResponse('delete', data, !response.ok);
+                loadStats();
+            } catch (error) {
+                showResponse('delete', { error: error.message }, true);
+            }
+        }
+
+        // Load stats on page load
+        window.addEventListener('load', loadStats);
+
+        // Auto-refresh stats every 10 seconds
+        setInterval(loadStats, 10000);
+    </script>
+</body>
+
+</html>

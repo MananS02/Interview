@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  # MongoDB Database Service
+  mongodb:
+    image: mongo:7.0
+    container_name: interview_mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-changeme123}
+      MONGO_INITDB_DATABASE: interview_db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+    networks:
+      - interview_network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+  # FastAPI Interview Application
+  interview_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: interview_app
+    restart: unless-stopped
+    environment:
+      # MongoDB Connection
+      MONGODB_URI: mongodb://admin:${MONGO_PASSWORD:-changeme123}@mongodb:27017/
+      MONGODB_DB: interview_db
+      
+      # API Keys (set these in .env file)
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY}
+      SARVAM_API_KEY: ${SARVAM_API_KEY}
+      
+      # Application Settings
+      PYTHONUNBUFFERED: 1
+      LOG_LEVEL: info
+    ports:
+      - "8080:8080"
+    volumes:
+      # Mount audio files directory for persistence
+      - audio_files:/app/audio_files
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - interview_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+# Named volumes for data persistence
+volumes:
+  mongodb_data:
+    driver: local
+  mongodb_config:
+    driver: local
+  audio_files:
+    driver: local
+
+# Network for service communication
+networks:
+  interview_network:
+    driver: bridge
